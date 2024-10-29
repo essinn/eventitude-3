@@ -1,8 +1,19 @@
 // this file will contain the functions to handle the requests from the user routes
 const db = require("../../database.js");
+const crypto = require("crypto");
 
 const getHash = (password, salt) => {
   return crypto.pbkdf2Sync(password, salt, 10000, 64, "sha512").toString("hex");
+};
+
+const setToken = (id, done) => {
+  const token = crypto.randomBytes(64).toString("hex");
+
+  const sql = "UPDATE users SET session_token = ? WHERE user_id = ?";
+
+  db.run(sql, [token, id], function (err) {
+    return done(err, token);
+  });
 };
 
 const create_user = (user, done) => {
@@ -10,7 +21,7 @@ const create_user = (user, done) => {
   const hash = getHash(user.password, salt);
 
   const sql =
-    "INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)";
+    "INSERT INTO users (first_name, last_name, email, password, salt) VALUES (?, ?, ?, ?, ?)";
   const values = [
     user.first_name,
     user.last_name,
@@ -19,24 +30,35 @@ const create_user = (user, done) => {
     salt.toString("hex"),
   ];
 
-  db.run(sql, values, (err, row) => {
+  db.run(sql, values, function (err) {
     if (err) {
       return done(err);
     }
 
-    return done(row);
+    return done(null, {
+      user_id: this.lastID,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+    });
   });
 };
 
 const login_user = (email, password, done) => {
-  const sql = "SELECT * FROM user WHERE email = ? AND password = ?";
+  const sql = "SELECT user_id, password, salt FROM users WHERE email = ?";
 
-  db.run(sql, [email, password], (err, row) => {
+  db.get(sql, [email], (err, row) => {
     if (err) {
-      return res.status(400).send(err.message);
+      return done(err);
     }
 
-    res.status(200).send("user logged in successfully", row);
+    const salt = row.salt ? Buffer.from(row.salt, "hex") : Buffer.alloc(0);
+
+    if (row.password !== getHash(password, salt)) {
+      return done(null, false);
+    } else {
+      return done(null, row.user_id);
+    }
   });
 };
 
@@ -46,4 +68,5 @@ module.exports = {
   create_user,
   login_user,
   logout_user,
+  setToken,
 };
