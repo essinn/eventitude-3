@@ -1,5 +1,6 @@
 // this file will contain the validation schema for the user routes
 const Joi = require("joi");
+const users = require("../models/user.server.model.js");
 
 const signup = (req, res) => {
   const schema = Joi.object({
@@ -14,6 +15,16 @@ const signup = (req, res) => {
   if (error) {
     return res.status(400).send(error.details[0].message);
   }
+
+  const { first_name, last_name, email, password } = req.body;
+
+  users.create_user(first_name, last_name, email, password, (err, row) => {
+    if (err) {
+      return res.status(400).send(err.message);
+    }
+
+    res.status(201).send("user created successfully", row);
+  });
 };
 const login = (req, res) => {
   const schema = Joi.object({

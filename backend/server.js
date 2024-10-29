@@ -2,9 +2,6 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const userRoutes = require("./app/routes/user.route");
-const eventRoutes = require("./app/routes/event.route");
-const questionRoutes = require("./app/routes/question.route");
 const app = express();
 app.use(cors());
 
@@ -25,13 +22,9 @@ app.get("/", (req, res, next) => {
 
 // Other API endpoints: Links go here...
 // You can uncomment the below four lines as you implement the functionality - we'll discuss this structure in week three.
-// require('./app/routes/user.server.routes')(app);
-// require('./app/routes/event.server.routes')(app);
-// require('./app/routes/question.server.routes')(app);
-
-app.get("/api", userRoutes);
-app.get("/api", eventRoutes);
-app.get("/api", questionRoutes);
+require("./app/routes/user.server.route.js")(app);
+require("./app/routes/event.server.route.js")(app);
+require("./app/routes/question.server.route.js")(app);
 
 // Default response for any other request
 app.use((req, res) => {

@@ -1,16 +1,12 @@
 // this file will contain the functions to handle the requests from the user routes
 const db = require("../../database.js");
 
-const create_user = (name, err) => {
+const create_user = () => {
   const sql =
     "INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)";
 
   db.run(sql, [first_name, last_name, email, password], (err, row) => {
-    if (err) {
-      return res.status(400).send(err.message);
-    }
-
-    res.status(201).send("user created sucessfully", row);
+    callback(err, row);
   });
 };
 
@@ -29,7 +25,7 @@ const login_user = (name, err) => {
 const logout_user = (req, res) => {};
 
 module.exports = {
-  signup,
-  login,
-  logout,
+  create_user,
+  login_user,
+  logout_user,
 };

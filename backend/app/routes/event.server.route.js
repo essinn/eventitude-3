@@ -1,5 +1,5 @@
 // the endpoints to the event controller
-require("express");
+const express = require("express");
 const {
   createEvent,
   eventById,
@@ -7,7 +7,7 @@ const {
   attendee,
   deleteEvent,
   search,
-} = require("../controllers/event.controller.js");
+} = require("../controllers/event.server.controller.js");
 
 module.exports = function (app) {
   app.route("/events").post(createEvent);
