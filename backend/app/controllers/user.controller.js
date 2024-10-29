@@ -1,4 +1,4 @@
-// this file will contain the functions to handle the requests from the user routes
+// this file will contain the validation schema for the user routes
 const Joi = require("joi");
 
 const signup = (req, res) => {

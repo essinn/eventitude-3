@@ -1,4 +1,4 @@
-// this file will contain the functions to handle the requests from the event routes
+// this file will contain the validation schema for the event routes
 const Joi = require("joi");
 
 const createEvent = (req, res) => {};

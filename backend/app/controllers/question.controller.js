@@ -1,4 +1,4 @@
-// this file will contain the functions to handle the requests from the question routes
+// this file will contain the validation schema for the question routes
 const Joi = require("joi");
 
 const askQuestion = (req, res) => {};
