@@ -1,19 +1,13 @@
 // the endpoints to the event controller
-const express = require("express");
-const {
-  createEvent,
-  eventById,
-  updateEvent,
-  attendee,
-  deleteEvent,
-  search,
-} = require("../controllers/event.server.controller.js");
+const events = require("../controllers/event.server.controller.js");
 
 module.exports = function (app) {
-  app.route("/events").post(createEvent);
-  app.route("/events/:event_id").get(eventById);
-  app.route("/events/:event_id").patch(updateEvent);
-  app.route("/events/:event_id").patch(attendee);
-  app.route("/events/:event_id").delete(deleteEvent);
-  app.route("/search").get(search);
+  app.route("/events").post(events.createEvent);
+  app
+    .route("/events/:event_id")
+    .get(events.eventById)
+    .patch(events.updateEvent)
+    .patch(events.attendee)
+    .delete(events.deleteEvent);
+  app.route("/search").get(events.search);
 };
