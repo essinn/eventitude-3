@@ -16,11 +16,9 @@ const signup = (req, res) => {
     return res.status(400).send(error.details[0].message);
   }
 
-  const { first_name, last_name, email, password } = req.body;
-
-  users.create_user(first_name, last_name, email, password, (err, row) => {
+  users.create_user(users, (err, row) => {
     if (err) {
-      return res.status(400).send(err.message);
+      return res.status(400).send("Error creating user: ", err.message);
     }
 
     res.status(201).send("user created successfully", row);

@@ -1,16 +1,34 @@
 // this file will contain the functions to handle the requests from the user routes
 const db = require("../../database.js");
 
-const create_user = () => {
+const getHash = (password, salt) => {
+  return crypto.pbkdf2Sync(password, salt, 10000, 64, "sha512").toString("hex");
+};
+
+const create_user = (user, done) => {
+  const salt = crypto.randomBytes(64);
+  const hash = getHash(user.password, salt);
+
   const sql =
     "INSERT INTO users (first_name, last_name, email, password) VALUES (?, ?, ?, ?)";
+  const values = [
+    user.first_name,
+    user.last_name,
+    user.email,
+    hash,
+    salt.toString("hex"),
+  ];
 
-  db.run(sql, [first_name, last_name, email, password], (err, row) => {
-    callback(err, row);
+  db.run(sql, values, (err, row) => {
+    if (err) {
+      return done(err);
+    }
+
+    return done(row);
   });
 };
 
-const login_user = (name, err) => {
+const login_user = (email, password, done) => {
   const sql = "SELECT * FROM user WHERE email = ? AND password = ?";
 
   db.run(sql, [email, password], (err, row) => {
