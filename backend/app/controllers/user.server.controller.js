@@ -66,6 +66,16 @@ const logout = (req, res) => {
   if (error) {
     return res.status(400).send(error.details[0].message);
   }
+
+  const token = req.get("X-Authorization");
+
+  users.logout_user(token, err => {
+    if (err) {
+      return res.status(400).send("Error logging out: " + err.message);
+    }
+
+    return res.status(200).send("User logged out successfully");
+  });
 };
 
 module.exports = {

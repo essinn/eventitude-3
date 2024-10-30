@@ -16,6 +16,18 @@ const setToken = (id, done) => {
   });
 };
 
+const getTokenId = (token, done) => {
+  const sql = "SELECT user_id FROM users WHERE session_token = ?";
+
+  db.get(sql, [token], (err, row) => {
+    if (err) {
+      return done(err);
+    }
+
+    return done(null, row ? row.user_id : null);
+  });
+};
+
 const create_user = (user, done) => {
   const salt = crypto.randomBytes(64);
   const hash = getHash(user.password, salt);
@@ -62,11 +74,18 @@ const login_user = (email, password, done) => {
   });
 };
 
-const logout_user = (req, res) => {};
+const logout_user = (token, done) => {
+  const sql = "UPDATE users SET session_token = '' WHERE session_token = ?";
+
+  db.run(sql, [token], err => {
+    return done(err);
+  });
+};
 
 module.exports = {
   create_user,
   login_user,
   logout_user,
   setToken,
+  getTokenId,
 };
