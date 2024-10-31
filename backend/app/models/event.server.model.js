@@ -41,7 +41,34 @@ const select = (event, done) => {
   });
 };
 
+const update = (event, done) => {
+  const sql =
+    "UPDATE events SET name = ?, description = ?, location = ?, start_date = ?, close_registration = ?, max_attendees = ?, creator_id = ? WHERE event_id = ?";
+
+  db.run(
+    sql,
+    [
+      event.name,
+      event.description,
+      event.location,
+      event.start_date,
+      event.close_registration,
+      event.max_attendees,
+      event.creator_id,
+      event.event_id,
+    ],
+    (err, row) => {
+      if (err) {
+        done(err);
+      }
+
+      done(null, row);
+    }
+  );
+};
+
 module.exports = {
   insert,
   select,
+  update,
 };

@@ -7,7 +7,7 @@ module.exports = function (app) {
     .route("/events/:event_id")
     .get(events.eventById)
     .patch(events.updateEvent)
-    .patch(events.attendee)
+    .post(events.attendee)
     .delete(events.deleteEvent);
   app.route("/search").get(events.search);
 };

@@ -52,7 +52,33 @@ const eventById = (req, res) => {
   });
 };
 
-const updateEvent = (req, res) => {};
+const updateEvent = (req, res) => {
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    description: Joi.string().required(),
+    location: Joi.string().required(),
+    start_date: Joi.date().required(),
+    close_registration: Joi.date().required(),
+    max_attendees: Joi.number().required(),
+    creator_id: Joi.number().required(),
+  });
+
+  const { error } = schema.validate(req.body);
+
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  event.update(req.body, (err, row) => {
+    if (err) {
+      return res
+        .status(400)
+        .json({ message: "Error updating event: " + err.message });
+    }
+
+    return res.status(200).json({ message: "Event updated successfully", row });
+  });
+};
 
 const attendee = (req, res) => {};
 const deleteEvent = (req, res) => {};
