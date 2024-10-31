@@ -67,8 +67,21 @@ const update = (event, done) => {
   );
 };
 
+const archive = (event, done) => {
+  const sql = "UPDATE events SET close_registration = -1 WHERE event_id = ?";
+
+  db.run(sql, [event.event_id, event.close_registration], (err, row) => {
+    if (err) {
+      done(err);
+    }
+
+    done(null, row);
+  });
+};
+
 module.exports = {
   insert,
   select,
   update,
+  archive,
 };

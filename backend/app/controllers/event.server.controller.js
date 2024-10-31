@@ -73,7 +73,7 @@ const updateEvent = (req, res) => {
     if (err) {
       return res
         .status(400)
-        .json({ message: "Error updating event: " + err.message });
+        .send({ message: "Error updating event: " + err.message });
     }
 
     return res.status(200).json({ message: "Event updated successfully", row });
@@ -81,7 +81,29 @@ const updateEvent = (req, res) => {
 };
 
 const attendee = (req, res) => {};
-const deleteEvent = (req, res) => {};
+
+const deleteEvent = (req, res) => {
+  const schema = Joi.object({
+    event_id: Joi.number().required(),
+  });
+
+  const { error } = schema.validate(req.params);
+
+  if (error) {
+    return res.status(400).send({ message: error.details[0].message });
+  }
+
+  event.archive(req.params, (err, row) => {
+    if (err) {
+      return res
+        .status(400)
+        .send({ message: "Error deleting event: " + err.message });
+    }
+
+    return res.status(200).json({ message: "Event deleted successfully", row });
+  });
+};
+
 const search = (req, res) => {};
 
 module.exports = {
