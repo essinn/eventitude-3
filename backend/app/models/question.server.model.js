@@ -1,5 +1,7 @@
-// this file will contain the functions to handle the requests from the question routes
-
+/**
+ * this file will contain the functions to handle the requests from the question routes
+ * the functions will interact with the sqlite database and return the results to the controller
+ */
 const db = require("../../database.js");
 
 // ask a question
@@ -32,9 +34,33 @@ const delete_question = (question, done) => {
   });
 };
 
+const update_vote = (question, done) => {
+  const sql = "UPDATE questions SET votes = votes + 1 WHERE question_id = ?";
+
+  db.run(sql, [question.question_id], (err, row) => {
+    if (err) {
+      done(err);
+    }
+
+    done(null, row);
+  });
+};
+
+const update_unvote = (question, done) => {
+  const sql = "UPDATE questions SET votes = votes - 1 WHERE question_id = ?";
+
+  db.run(sql, [question.question_id], (err, row) => {
+    if (err) {
+      done(err);
+    }
+
+    done(null, row);
+  });
+};
+
 module.exports = {
   insert,
   delete_question,
-  // update_vote,
-  // update_unvote,
+  update_vote,
+  update_unvote,
 };

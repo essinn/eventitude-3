@@ -55,9 +55,53 @@ const deleteQuestion = (req, res) => {
   });
 };
 
-const vote = (req, res) => {};
+const vote = (req, res) => {
+  const schema = Joi.object({
+    question_id: Joi.number().required(),
+  });
 
-const unvote = (req, res) => {};
+  const { error } = schema.validate(req.params);
+
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  question.update_vote(req.params, (err, row) => {
+    if (err) {
+      return res
+        .status(400)
+        .send({ message: "Error voting question: " + err.message });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Question voted successfully", row });
+  });
+};
+
+const unvote = (req, res) => {
+  const schema = Joi.object({
+    question_id: Joi.number().required(),
+  });
+
+  const { error } = schema.validate(req.params);
+
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+
+  question.update_vote(req.params, (err, row) => {
+    if (err) {
+      return res
+        .status(400)
+        .send({ message: "Error unvoting question: " + err.message });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Question unvoted successfully", row });
+  });
+};
 
 module.exports = {
   askQuestion,
