@@ -128,7 +128,29 @@ const deleteEvent = (req, res) => {
   });
 };
 
-const search = (req, res) => {};
+const search = (req, res) => {
+  const schema = Joi.object({
+    name: Joi.string().required(),
+    location: Joi.string().required(),
+    start_date: Joi.string().optional(),
+  });
+
+  const { error } = schema.validate(req.query);
+
+  if (error) {
+    return res.status(400).send({ message: error.details[0].message });
+  }
+
+  event.query(req.query, (err, row) => {
+    if (err) {
+      return res
+        .status(400)
+        .send({ message: "Error searching events: " + err.message });
+    }
+
+    return res.status(200).json({ message: "search successful", row });
+  });
+};
 
 module.exports = {
   createEvent,

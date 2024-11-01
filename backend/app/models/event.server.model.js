@@ -92,10 +92,24 @@ const attend = (event, done) => {
   });
 };
 
+const query = (event, done) => {
+  const sql =
+    "SELECT * FROM events WHERE name LIKE ? AND location LIKE ? AND start_date LIKE ?";
+
+  db.all(sql, [event.name, event.location, event.start_date], (err, row) => {
+    if (err) {
+      done(err);
+    }
+
+    done(null, row);
+  });
+};
+
 module.exports = {
   insert,
   select,
   update,
   archive,
   attend,
+  query,
 };
