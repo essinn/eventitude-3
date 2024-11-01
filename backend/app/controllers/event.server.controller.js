@@ -1,4 +1,6 @@
-// this file will contain the validation schema for the event routes
+/**
+ * this file will contain the validation schema for the event routes
+ */
 const Joi = require("joi");
 const event = require("../models/event.server.model");
 
@@ -69,7 +71,7 @@ const updateEvent = (req, res) => {
     return res.status(400).send(error.details[0].message);
   }
 
-  event.update(req.body, (err, row) => {
+  event.update({ ...req.body, event_id: req.params.event_id }, (err, row) => {
     if (err) {
       return res
         .status(400)
@@ -80,7 +82,29 @@ const updateEvent = (req, res) => {
   });
 };
 
-const attendee = (req, res) => {};
+const attendee = (req, res) => {
+  const schema = Joi.object({
+    event_id: Joi.number().required(),
+  });
+
+  const { error } = schema.validate(req.params);
+
+  if (error) {
+    return res.status(400).send({ message: error.details[0].message });
+  }
+
+  event.attend(req.params, (err, row) => {
+    if (err) {
+      return res
+        .status(400)
+        .send({ message: "Error attending event: " + err.message });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Event attended successfully", row });
+  });
+};
 
 const deleteEvent = (req, res) => {
   const schema = Joi.object({

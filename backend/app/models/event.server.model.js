@@ -1,5 +1,6 @@
 /**
  * this file will contain the functions to handle the requests from the event routes
+ * the functions will interact with the sqlite database and return the results to the controller
  */
 const db = require("../../database.js");
 
@@ -79,9 +80,22 @@ const archive = (event, done) => {
   });
 };
 
+const attend = (event, done) => {
+  const sql = "INSERT INTO attendees (event_id, user_id) VALUES (?, ?)";
+
+  db.run(sql, [event.event_id, event.user_id], (err, row) => {
+    if (err) {
+      done(err);
+    }
+
+    done(null, row);
+  });
+};
+
 module.exports = {
   insert,
   select,
   update,
   archive,
+  attend,
 };
