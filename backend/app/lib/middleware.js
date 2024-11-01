@@ -13,7 +13,7 @@ const authenticated = (req, res, next) => {
     }
 
     if (!user_id) {
-      return res.status(401).json({ message: "Unauthorized" });
+      return res.status(401).json({ message: "User must be logged in" });
     }
 
     req.user_id = user_id;

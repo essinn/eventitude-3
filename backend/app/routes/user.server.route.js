@@ -5,5 +5,5 @@ const authenticated = require("../lib/middleware.js");
 module.exports = function (app) {
   app.route("/users").post(users.signup);
   app.route("/login").post(users.login);
-  app.route("/logout").post(users.logout);
+  app.route("/logout").post(authenticated, users.logout);
 };
